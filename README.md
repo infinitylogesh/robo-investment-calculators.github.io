@@ -9,6 +9,11 @@ This repository contains an advanced goal-based investment calculator that allow
 - Customizable debt-to-equity ratio
 - Separate expected returns for debt and equity investments
 
+## Quick Access
+
+You can view the calculator directly in your browser by clicking this link:
+[View Investment Calculator](https://raw.githack.com/infinitylogesh/robo-investment-calculators.github.io/gh-pages/index.html)
+
 ## How to Use
 
 ### Option 1: Run Locally (Recommended)
