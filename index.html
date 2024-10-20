@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Goal-Based Investment Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .calculator {
+            background-color: #f7f7f7;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #addGoal {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Advanced Goal-Based Investment Calculator</h1>
+    <button id="addGoal">Add Another Goal</button>
+    <div id="calculators"></div>
+
+    <script>
+        let goalCount = 0;
+
+        function createCalculator() {
+            goalCount++;
+            const calculator = document.createElement('div');
+            calculator.className = 'calculator';
+            calculator.innerHTML = `
+                <h2>Goal ${goalCount}</h2>
+                <label for="initial-investment-${goalCount}">Initial Investment ($):</label>
+                <input type="number" id="initial-investment-${goalCount}" required>
+
+                <label for="goal-amount-${goalCount}">Goal Amount ($):</label>
+                <input type="number" id="goal-amount-${goalCount}" required>
+
+                <label for="years-${goalCount}">Number of Years:</label>
+                <input type="number" id="years-${goalCount}" required>
+
+                <label for="expected-returns-${goalCount}">Expected Annual Returns (%):</label>
+                <input type="number" id="expected-returns-${goalCount}" step="0.1" required>
+
+                <label for="debt-ratio-${goalCount}">Debt Investment Ratio (%):</label>
+                <input type="number" id="debt-ratio-${goalCount}" step="0.1" required value="50">
+
+                <button onclick="calculate(${goalCount})">Calculate</button>
+                <div id="result-${goalCount}" class="result"></div>
+            `;
+            document.getElementById('calculators').appendChild(calculator);
+        }
+
+        document.getElementById('addGoal').addEventListener('click', createCalculator);
+
+        function calculate(goalId) {
+            const initialInvestment = parseFloat(document.getElementById(`initial-investment-${goalId}`).value);
+            const goalAmount = parseFloat(document.getElementById(`goal-amount-${goalId}`).value);
+            const years = parseFloat(document.getElementById(`years-${goalId}`).value);
+            const expectedReturns = parseFloat(document.getElementById(`expected-returns-${goalId}`).value) / 100;
+            const debtRatio = parseFloat(document.getElementById(`debt-ratio-${goalId}`).value) / 100;
+            const equityRatio = 1 - debtRatio;
+
+            const monthlyRate = expectedReturns / 12;
+            const totalMonths = years * 12;
+
+            const monthlyInvestment = (goalAmount - initialInvestment * Math.pow(1 + monthlyRate, totalMonths)) / 
+                                      ((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate);
+
+            const monthlyDebtInvestment = monthlyInvestment * debtRatio;
+            const monthlyEquityInvestment = monthlyInvestment * equityRatio;
+
+            const resultElement = document.getElementById(`result-${goalId}`);
+            resultElement.innerHTML = `
+                <p>To reach your goal, you need to invest:</p>
+                <p>Total: $${monthlyInvestment.toFixed(2)} monthly</p>
+                <p>Debt Investment: $${monthlyDebtInvestment.toFixed(2)} monthly (${(debtRatio * 100).toFixed(1)}%)</p>
+                <p>Equity Investment: $${monthlyEquityInvestment.toFixed(2)} monthly (${(equityRatio * 100).toFixed(1)}%)</p>
+            `;
+        }
+
+        // Create the first calculator on page load
+        createCalculator();
+    </script>
+</body>
+</html>
